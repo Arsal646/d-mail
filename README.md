@@ -303,7 +303,7 @@ docker-compose ps
 docker-compose logs -f
 ```
 
-#### 7. Setup MongoDB Indexes (Critical for 20K emails/day)
+#### 7. Setup MongoDB Indexes (Critical for many emails/day)
 ```bash
 # Wait for MongoDB to be ready
 sleep 30
