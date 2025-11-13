@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: tempmail_mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - tempmail_network
+    environment:
+      MONGO_INITDB_DATABASE: tempmail
+    command: mongod --wiredTigerCacheSizeGB 1 --wiredTigerCollectionBlockCompressor snappy
+
+  smtp:
+    build:
+      context: ./smtp-server
+      dockerfile: Dockerfile
+    container_name: tempmail_smtp
+    restart: unless-stopped
+    ports:
+      - "25:25"
+    networks:
+      - tempmail_network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - MONGO_DB_NAME=tempmail
+      - MONGO_COLLECTION=emails
+      - TEMP_DOMAIN=${TEMP_DOMAIN:-tempmail.local}
+    depends_on:
+      - mongo
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: tempmail_api
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    networks:
+      - tempmail_network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - MONGO_DB_NAME=tempmail
+      - MONGO_COLLECTION=emails
+      - API_TEMP_DOMAIN=${API_TEMP_DOMAIN:-tempmail.local}
+      - API_PORT=4000
+      - NODE_ENV=production
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:
+
+networks:
+  tempmail_network:
+    driver: bridge

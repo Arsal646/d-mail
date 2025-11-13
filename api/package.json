@@ -1,0 +1,22 @@
+{
+  "name": "tempmail-api",
+  "version": "1.0.0",
+  "description": "Temporary email API service",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}
